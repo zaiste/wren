@@ -1,0 +1,1 @@
+export { withMethod } from './middleware/withMethod.ts';
