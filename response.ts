@@ -1,22 +1,20 @@
-function isPlainObject(object: unknown): object is Record<string, unknown> {
+import type { PlainObject } from "./types.ts";
+
+function isPlainObject<T>(object: unknown): object is T {
   const prototype = Object.getPrototypeOf(object);
   return prototype === null || prototype.constructor === Object;
-
 }
 
 // 2xx
-export const OK = (body: BodyInit | Record<string, unknown>, headers = {}) => {
+export const OK = <T = PlainObject>(body: BodyInit | T, headers = {}) => {
   const init = { status: 200, headers };
-
-  if (isPlainObject(body)) {
-    return Response.json(body, init)
-  } else {
-    return new Response(body, init);
-  }
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
 }
 
-export const Created = (body: BodyInit = '', headers = {}) =>
-  new Response(body, { status: 201, headers });
+export const Created = <T = PlainObject>(body: BodyInit | T = '', headers = {}) => {
+  const init = { status: 201, headers };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}
 
 export const Accepted = (headers = {}) =>
   new Response('', { status: 202, headers });
@@ -29,14 +27,20 @@ export const Redirect = (url: string, status = 302) =>
   Response.redirect(url, status)
 
 // 4xx
-export const BadRequest = (body: BodyInit = '') =>
-  new Response(body, { status: 400 });
+export const BadRequest = <T = PlainObject>(body: BodyInit | T = '') => {
+  const init = { status: 400 };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}
 
-export const Unauthorized = (body: BodyInit = '') =>
-  new Response(body, { status: 401 });
+export const Unauthorized = <T = PlainObject>(body: BodyInit | T = '') => {
+  const init = { status: 401 };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}
 
-export const Forbidden = (body: BodyInit = '') =>
-  new Response(body, { status: 403 });
+export const Forbidden = <T = PlainObject>(body: BodyInit | T = '') => {
+  const init = { status: 403 };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}
 
 export const NotFound = (headers = {}) =>
   new Response('Not Found', { status: 404, headers });
@@ -47,11 +51,13 @@ export const MethodNotAllowed = () =>
 export const NotAcceptable = () =>
   new Response('', { status: 406 });
 
-export const Conflict = (body: BodyInit = '') =>
-  new Response(body, { status: 409 });
+export const Conflict = <T = PlainObject>(body: BodyInit | T = '') => {
+  const init = { status: 409 };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}
 
 // 5xx
-export const InternalServerError = (body: BodyInit = '') =>
-  new Response(body, { status: 409 });
-
-
+export const InternalServerError = <T = PlainObject>(body: BodyInit | T = '') => {
+  const init = { status: 500 };
+  return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
+}

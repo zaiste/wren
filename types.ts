@@ -1,5 +1,7 @@
 import type { ConnInfo } from "http/server.ts";
 
+export type PlainObject = Record<string, unknown>;
+
 export interface RequestExtension<P = Params> {
   params: P;
   files?: {
