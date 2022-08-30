@@ -61,3 +61,11 @@ export const InternalServerError = <T = PlainObject>(body: BodyInit | T = '') =>
   const init = { status: 500 };
   return isPlainObject<T>(body) ? Response.json(body, init) : new Response(body, init);
 }
+
+// Special case (type-related)
+
+export const HTML = (body: string, headers = {}) =>
+  new Response(body, {
+    status: 200,
+    headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' },
+  });
