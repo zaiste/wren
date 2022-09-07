@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "http/": "https://deno.land/std@0.154.0/http/",
+    "wren/": "../../"
+  }
+}
