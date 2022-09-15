@@ -1,6 +1,9 @@
 {
 	"importMap": "./import_map.json",
 	"fmt": {
+		"files": {
+			"exclude": ["README.md"]
+		},
 		"options": {
 			"useTabs": true,
 			"lineWidth": 101,
