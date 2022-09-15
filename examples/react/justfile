@@ -1,0 +1,2 @@
+run:
+  deno run -A --unstable main.tsx
