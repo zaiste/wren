@@ -26,6 +26,20 @@ const routes = [
 serve(routes, { port: 3000 });
 ```
 
+## Getting Started
+
+```
+deno run -A -r https://wren.deno.dev my-wren-project
+```
+
+```
+cd my-wren-project
+```
+
+```
+deno task start
+```
+
 ## Features
 
 ### Aliases for HTTP Responses
@@ -197,3 +211,4 @@ TDB
 ```tsx
 type Handler = (request: Request & RequestExtension, connInfo: ConnInfo) => Response | Promise<Response>;
 ```
+
