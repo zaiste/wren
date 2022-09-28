@@ -9,3 +9,5 @@ export function serve(routes: Routes, options: ServeInit = {
 	const routing = Routing(routes);
 	return upstreamServe(routing, options);
 }
+
+export * from './types.ts';
