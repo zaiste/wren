@@ -1,14 +1,6 @@
-import {
-	Handler,
-	HTTPMethod,
-	Meta,
-	Middleware,
-	Pipeline,
-	Route,
-	RouteOptions,
-} from './types.ts';
+import { Handler, HTTPMethod, Meta, Middleware, Pipeline, Route, RouteOptions } from './types.ts';
 
-import { isPipeline } from './util.ts'
+import { isPipeline } from './util.ts';
 
 function makeRoute(
 	name: HTTPMethod,
