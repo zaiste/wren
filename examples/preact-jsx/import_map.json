@@ -1,9 +1,9 @@
 {
 	"imports": {
-		"http/": "https://deno.land/std@0.155.0/http/",
+		"http/": "https://deno.land/std@0.159.0/http/",
 		"wren/": "../../",
-		"preact": "https://esm.sh/preact@10.11.0",
-		"preact/": "https://esm.sh/preact@10.11.0/",
-		"preact-render-to-string": "https://esm.sh/preact-render-to-string@5.2.4?external=preact"
+		"preact": "https://esm.sh/preact@10.11.1",
+		"preact/": "https://esm.sh/preact@10.11.1/",
+		"preact-render-to-string": "https://esm.sh/preact-render-to-string@5.2.5?external=preact"
 	}
 }
