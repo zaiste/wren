@@ -1,5 +1,5 @@
-import * as path from 'https://deno.land/std@0.155.0/path/mod.ts';
-import * as argopts from 'https://deno.land/std@0.155.0/flags/mod.ts';
+import * as path from 'path';
+import * as argopts from 'cli';
 
 const HelpMessage = `Initialize a new Wren project. 
 
