@@ -7,6 +7,7 @@ export interface RequestExtension<P = Params> {
 	files?: {
 		[name: string]: File;
 	};
+	page: <D = unknown>(data: D) => unknown;
 }
 
 export type Handler = (
