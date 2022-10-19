@@ -123,7 +123,8 @@ export const Routing = (routes: Routes = []): OrigHandler => {
 
 			for (const [method, handler] of Object.entries(unit)) {
 				if (method in HTTPMethod) {
-					const flow: Pipeline = [...middleware, handler as Handler];
+					const handlerContainer: Pipeline = isPipeline(handler) ? handler : [handler];
+					const flow: Pipeline = [...middleware, ...handlerContainer];
 					add(method as HTTPMethod, path, ...flow);
 				}
 				// else: a key name undefined in the spec -> discarding

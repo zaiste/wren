@@ -33,11 +33,11 @@ export interface RouteOptions {
 	meta?: Meta;
 }
 export interface HandlerMapping {
-	GET?: Handler;
-	POST?: Handler;
-	PUT?: Handler;
-	PATCH?: Handler;
-	DELETE?: Handler;
+	GET?: Handler | Pipeline;
+	POST?: Handler | Pipeline;
+	PUT?: Handler | Pipeline;
+	PATCH?: Handler | Pipeline;
+	DELETE?: Handler | Pipeline;
 	middleware?: Middleware[];
 	meta?: Meta;
 }
