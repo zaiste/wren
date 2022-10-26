@@ -19,11 +19,11 @@ import * as Response from 'wren/response.ts';
 
 const routes = [
   GET('/', () => Response.OK('Hello, Wren')),
-  POST('/form-post', (_request, { params }) => 
+  POST('/form-post', ({ params }) => 
     Response.Created(`Received: ${JSON.stringify(params)}`)),
 ];
 
-serve(routes, { port: 3000 });
+serve(routes);
 ```
 
 ## Getting Started
@@ -123,12 +123,12 @@ import * as Response from 'wren/response.ts';
 const routes = [
   GET('/', () => Response.OK('Hello, Wren')),
   GET('/hello', () => Response.Accepted('Hello, again Wren')),
-  POST('/form-post', (_request, { params }) =>
+  POST('/form-post', ({ params }) =>
     Response.Created(`Received: ${JSON.stringify(params)}`)),
 ]
 
 const routing = Routing(routes);
-serve(routing, { port: 3000 });
+serve(routing);
 ```
 
 Instead of using the `serve` function from Deno's standard library, you can swap it with the `serve` provided by Wren to pass the `routes` array directly.
@@ -142,7 +142,7 @@ const routes = [
   ...
 ];
 
-serve(routes, { port: 3000 });
+serve(routes);
 ```
 
 ### Parsing of `Request`'s Body
@@ -159,8 +159,8 @@ For convenience, Wren combines all those params into a single, readily available
 In addition to that, when you sent `multipart` requests, Wren also provides the uploaded files as the additional `files` field of the request.
 
 ```tsx
-const handler: Handler = (_request, context) => {
-  const { params, files } = context;
+const handler: Handler = (request) => {
+  const { params, files } = request;
 
   for (const file of files) {
     // iterate over files to process them or to save them on disk
@@ -170,7 +170,7 @@ const handler: Handler = (_request, context) => {
 }
 ```
 
-The shape for both `params` and `files` is provided as the `Context` type not to obscure the built-in Deno's `Request` as defined in the Fetch API.
+The shape for both `params` and `files` is provided as the `RequestExtension` type not to obscure the built-in Deno's `Request` as defined in the Fetch API.
 
 ### Composable Middlewares
 
@@ -204,11 +204,13 @@ In Wren, middlewares can be defined globally (similar to the `.use` method in Ex
 
 TDB
 
-#### `Context`
+#### `RequestExtension`
 
-`Context` defines `params` and `files` that are automatically extracted from the incoming request. This type is defined as the 2nd paramter in the handler so it's less intrusive.
+`RequestExtension` defines `params` and `files` that are automatically extracted from the incoming request. This type is defined as an intersection type to the built-in Request type so it's less intrusive.
 
 ```tsx
-type Handler = (request: Request, context: Context) => Response | Promise<Response>;
+type Handler = (request: Request & RequestExtension, context: Context) => Response | Promise<Response>;
 ```
+
+#### `Context`
 
