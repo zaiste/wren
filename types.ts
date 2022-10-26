@@ -28,6 +28,7 @@ export type Handler = (
 	request: Request & RequestExtension,
 	context: Context
 ) => Response | Promise<Response>;
+export type PlainHandler = (request: Request) => Response | Promise<Response>;
 
 export interface Meta {
 	summary?: string;
