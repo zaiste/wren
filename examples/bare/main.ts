@@ -4,7 +4,7 @@ import * as Response from 'wren/response.ts';
 
 const routes = [
 	GET('/', () => Response.OK('Hello, Root')),
-	POST('/form-post', ({ params }) => {
+	POST('/form-post', (_request, { params }) => {
 		return Response.Created(`POST with: ${JSON.stringify(params, null, 2)}`);
 	}),
 	GET('/json', () => {
