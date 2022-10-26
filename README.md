@@ -19,7 +19,7 @@ import * as Response from 'wren/response.ts';
 
 const routes = [
   GET('/', () => Response.OK('Hello, Wren')),
-  POST('/form-post', ({ params }) => 
+  POST('/form-post', (_request, { params }) => 
     Response.Created(`Received: ${JSON.stringify(params)}`)),
 ];
 
@@ -123,7 +123,7 @@ import * as Response from 'wren/response.ts';
 const routes = [
   GET('/', () => Response.OK('Hello, Wren')),
   GET('/hello', () => Response.Accepted('Hello, again Wren')),
-  POST('/form-post', ({ params }) =>
+  POST('/form-post', (_request, { params }) =>
     Response.Created(`Received: ${JSON.stringify(params)}`)),
 ]
 
@@ -159,8 +159,8 @@ For convenience, Wren combines all those params into a single, readily available
 In addition to that, when you sent `multipart` requests, Wren also provides the uploaded files as the additional `files` field of the request.
 
 ```tsx
-const handler: Handler = (request) => {
-  const { params, files } = request;
+const handler: Handler = (_request, context) => {
+  const { params, files } = context;
 
   for (const file of files) {
     // iterate over files to process them or to save them on disk
@@ -170,7 +170,7 @@ const handler: Handler = (request) => {
 }
 ```
 
-The shape for both `params` and `files` is provided as an *intersection type* `RequestExtension` not to obscure the built-in Deno's `Request` as defined in the Fetch API.
+The shape for both `params` and `files` is provided as the `Context` type not to obscure the built-in Deno's `Request` as defined in the Fetch API.
 
 ### Composable Middlewares
 
@@ -204,11 +204,11 @@ In Wren, middlewares can be defined globally (similar to the `.use` method in Ex
 
 TDB
 
-#### `RequestExtension`
+#### `Context`
 
-`RequestExtension` defines `params` and `files` that are automatically extracted from the incoming request. This type is defined as an intersection type to the built-in `Request` type so it's less intrusive.
+`Context` defines `params` and `files` that are automatically extracted from the incoming request. This type is defined as the 2nd paramter in the handler so it's less intrusive.
 
 ```tsx
-type Handler = (request: Request & RequestExtension, connInfo: ConnInfo) => Response | Promise<Response>;
+type Handler = (request: Request, context: Context) => Response | Promise<Response>;
 ```
 

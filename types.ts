@@ -2,17 +2,26 @@ import type { ConnInfo } from 'http/server.ts';
 
 export type PlainObject = Record<string, unknown>;
 
-export interface RequestExtension<P = Params> {
-	params: P;
+export interface Context<P = Params> {
+	// Common
+	params?: P;
 	files?: {
 		[name: string]: File;
 	};
-	page: <D = unknown>(data: D) => unknown;
+	page?: <D = unknown>(data: D) => unknown;
+
+	// Deno
+	connInfo?: ConnInfo;
+
+	// Cloudflare Workers
+	bindings: Bindings;
+	execution: ExecutionContext
+
 }
 
 export type Handler = (
-	request: Request & RequestExtension,
-	connInfo: ConnInfo,
+	request: Request,
+	context: Context
 ) => Response | Promise<Response>;
 
 export interface Meta {
@@ -73,3 +82,18 @@ export interface KeyValue {
 	name: string;
 	value: string;
 }
+
+// Cloudflare Specific
+
+export interface Bindings {
+	[key: string]: any;
+}
+
+export interface ExecutionContext {
+	waitUntil(promise: Promise<unknown>): void;
+}
+export type CloudflareHandler = (
+	request: Request,
+	env: Bindings,
+	context: ExecutionContext,
+) => Response | Promise<Response>;

@@ -1,5 +1,5 @@
-import type { ConnInfo, Handler as OrigHandler } from 'http/server.ts';
-import { Handler, Middleware, Params, Pipeline, RequestExtension, Routes } from './types.ts';
+import type { ConnInfo, Handler as DenoHandler } from 'http/server.ts';
+import type { Handler, Middleware, Params, Pipeline, Context, Routes } from './types.ts';
 
 import { Router } from './router.ts';
 import { HTTPMethod } from './types.ts';
@@ -69,35 +69,32 @@ const parseBody = async (request: Request) => {
 
 const RouteFinder = (router: Router): Middleware => {
 	return (nextHandler: Handler) =>
-	async (
-		request: Request & RequestExtension,
-		connInfo: ConnInfo,
-	) => {
-		const { method, url } = request;
-		const data = router.find(method, url) || router.find('ANY', url);
+		async (request: Request, context: Context) => {
+			const { method, url } = request;
+			const data = router.find(method, url) || router.find('ANY', url);
 
-		if (data) {
-			const { handler: foundHandler, params: pathParams } = data;
+			if (data) {
+				const { handler: foundHandler, params: pathParams } = data;
 
-			const queryParams: Params = {};
-			const { searchParams } = new URL(url);
-			for (const [key, value] of searchParams) {
-				queryParams[key] = inferRequestValueType(value);
+				const queryParams: Params = {};
+				const { searchParams } = new URL(url);
+				for (const [key, value] of searchParams) {
+					queryParams[key] = inferRequestValueType(value);
+				}
+
+				const { files, params: bodyParams } = await parseBody(request);
+
+				context.params = { ...queryParams, ...pathParams, ...bodyParams };
+				context.files = files;
+
+				return await foundHandler(request, context);
+			} else {
+				return nextHandler(request, context);
 			}
-
-			const { files, params: bodyParams } = await parseBody(request);
-
-			request.params = { ...queryParams, ...pathParams, ...bodyParams };
-			request.files = files;
-
-			return await foundHandler(request, connInfo);
-		} else {
-			return nextHandler(request, connInfo);
-		}
-	};
+		};
 };
 
-export const Routing = (routes: Routes = []): OrigHandler => {
+export const Routing = (routes: Routes = []): DenoHandler => {
 	const router = new Router();
 	const middlewares: Array<Middleware> = [];
 
@@ -153,10 +150,22 @@ export const Routing = (routes: Routes = []): OrigHandler => {
 	);
 
 	return (request: Request, connInfo: ConnInfo) => {
-		// TODO ask Michal
-		(request as Request & RequestExtension).params = {};
+		const context: Context = {
+			connInfo,
+			params: {},
+			bindings: {},
+			execution: {
+				waitUntil(promise) {
+					// Nothing to do here!
+					return promise.catch(err => {
+						console.error(err);
+						throw err;
+					})
+				},
+			}
+		}
 
-		return pipeline(request as Request & RequestExtension, connInfo);
+		return pipeline(request, context);
 		// .then(handle(context))
 		// .catch(this.handleError(context));
 	};
