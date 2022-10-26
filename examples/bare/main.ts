@@ -12,8 +12,8 @@ const routes = [
 			foo: 1,
 			bar: 'baz',
 			else: {
-				bim: 1234
-			}
+				bim: 1234,
+			},
 		});
 	}),
 ];

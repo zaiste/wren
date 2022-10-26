@@ -3,5 +3,5 @@
 ## Run
 
 ```
-deno task start 
+deno task start
 ```
