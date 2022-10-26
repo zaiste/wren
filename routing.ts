@@ -4,6 +4,7 @@ import { Handler, Middleware, Params, Pipeline, RequestExtension, Routes } from 
 import { Router } from './router.ts';
 import { HTTPMethod } from './types.ts';
 import { isHandler, isHandlerMapping, isPipeline } from './util.ts';
+import * as Response from './response.ts';
 
 const compose = <T extends CallableFunction, U>(...functions: T[]) => (args: U) =>
 	functions.reduceRight((arg, fn) => fn(arg), args);
@@ -148,8 +149,7 @@ export const Routing = (routes: Routes = []): OrigHandler => {
 		...middlewares,
 		RouteFinder(router),
 	)(
-		// (_) => Response.NotFound()
-		(_) => new Response('Not Found', { status: 404 }),
+		(_) => Response.NotFound()
 	);
 
 	return (request: Request, connInfo: ConnInfo) => {
