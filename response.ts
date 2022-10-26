@@ -78,3 +78,5 @@ export const HTML = (body: string | ReadableStream, headers = {}) =>
 		status: 200,
 		headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' },
 	});
+
+export const Plain = (body?: BodyInit, init?: ResponseInit) => new Response(body, init);
