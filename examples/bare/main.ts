@@ -4,7 +4,7 @@ import * as Response from 'wren/response.ts';
 
 const routes = [
 	GET('/', () => Response.OK('Hello, Root')),
-	POST('/form-post', (_request, { params }) => {
+	POST('/form-post', ({ params }) => {
 		return Response.Created(`POST with: ${JSON.stringify(params, null, 2)}`);
 	}),
 	GET('/json', () => {
@@ -18,4 +18,7 @@ const routes = [
 	}),
 ];
 
-serve(routes, { port: 3000 });
+serve(routes);
+
+// Run on different port
+// serve(routes, { port: 3000 });

@@ -1,6 +1,6 @@
 {
 	"imports": {
 		"http/": "https://deno.land/std@0.160.0/http/",
-		"wren/": "https://deno.land/x/wren@0.6.0/"
+		"wren/": "https://deno.land/x/wren@0.7.0/"
 	}
 }
