@@ -2,25 +2,30 @@ import type { ConnInfo } from 'http/server.ts';
 
 export type PlainObject = Record<string, unknown>;
 
-export interface Context<P = Params> {
-	// Common
-	params?: P;
-	files?: {
-		[name: string]: File;
-	};
-	page?: <D = unknown>(data: D) => unknown;
+export interface BaseContext {
+	page: <D = unknown>(data: D) => unknown;
+}
 
-	// Deno
-	connInfo?: ConnInfo;
+export interface DenoContext {
+	connInfo: ConnInfo;
+}
 
-	// Cloudflare Workers
+export interface CloudflareContext {
 	bindings: Bindings;
 	execution: ExecutionContext
+}
 
+export type Context = BaseContext & DenoContext & CloudflareContext;
+
+export interface RequestExtension<P = Params> {
+	params: P;
+	files: {
+		[name: string]: File;
+	};
 }
 
 export type Handler = (
-	request: Request,
+	request: Request & RequestExtension,
 	context: Context
 ) => Response | Promise<Response>;
 

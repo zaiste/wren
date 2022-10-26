@@ -1,5 +1,5 @@
 import type { ConnInfo, Handler as DenoHandler } from 'http/server.ts';
-import type { Handler, Middleware, Params, Pipeline, Context, Routes } from './types.ts';
+import type { Handler, Middleware, Params, Pipeline, Routes, RequestExtension, Context } from './types.ts';
 
 import { Router } from './router.ts';
 import { HTTPMethod } from './types.ts';
@@ -69,7 +69,7 @@ const parseBody = async (request: Request) => {
 
 const RouteFinder = (router: Router): Middleware => {
 	return (nextHandler: Handler) =>
-		async (request: Request, context: Context) => {
+		async (request: Request & RequestExtension, context) => {
 			const { method, url } = request;
 			const data = router.find(method, url) || router.find('ANY', url);
 
@@ -84,8 +84,8 @@ const RouteFinder = (router: Router): Middleware => {
 
 				const { files, params: bodyParams } = await parseBody(request);
 
-				context.params = { ...queryParams, ...pathParams, ...bodyParams };
-				context.files = files;
+				request.params = { ...queryParams, ...pathParams, ...bodyParams };
+				request.files = files;
 
 				return await foundHandler(request, context);
 			} else {
@@ -150,9 +150,14 @@ export const Routing = (routes: Routes = []): DenoHandler => {
 	);
 
 	return (request: Request, connInfo: ConnInfo) => {
+		(request as Request & RequestExtension).params = {};
+		(request as Request & RequestExtension).files = {};
+
 		const context: Context = {
+			page: () => { },
+			// Deno
 			connInfo,
-			params: {},
+			// Cloudflare
 			bindings: {},
 			execution: {
 				waitUntil(promise) {
@@ -165,8 +170,6 @@ export const Routing = (routes: Routes = []): DenoHandler => {
 			}
 		}
 
-		return pipeline(request, context);
-		// .then(handle(context))
-		// .catch(this.handleError(context));
+		return pipeline(request as Request & RequestExtension, context);
 	};
 };
