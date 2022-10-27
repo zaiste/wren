@@ -82,7 +82,7 @@ const RouteFinder = (router: Router): Middleware => {
 					queryParams[key] = inferRequestValueType(value);
 				}
 
-				const { files, params: bodyParams } = await parseBody(request);
+				const { files, params: bodyParams } = await parseBody(request.clone());
 
 				request.params = { ...queryParams, ...pathParams, ...bodyParams };
 				request.files = files;
