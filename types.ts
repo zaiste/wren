@@ -1,4 +1,4 @@
-import type { ConnInfo } from 'http/server.ts';
+import type { ConnInfo, Handler as DenoHandler } from 'http/server.ts';
 
 export type PlainObject = Record<string, unknown>;
 
@@ -103,3 +103,5 @@ export type CloudflareHandler = (
 	env: Bindings,
 	context: ExecutionContext,
 ) => Response | Promise<Response>;
+
+export { DenoHandler };

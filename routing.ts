@@ -1,5 +1,5 @@
 import type { ConnInfo, Handler as DenoHandler } from 'http/server.ts';
-import type { Handler, Middleware, Params, Pipeline, Routes, RequestExtension, Context } from './types.ts';
+import type { Handler, Middleware, Params, Pipeline, Routes, RequestExtension, Context, CloudflareHandler, Bindings, ExecutionContext } from './types.ts';
 
 import { Router } from './router.ts';
 import { HTTPMethod } from './types.ts';
@@ -94,7 +94,7 @@ const RouteFinder = (router: Router): Middleware => {
 		};
 };
 
-export const Routing = (routes: Routes = []): DenoHandler => {
+export const Routing = (routes: Routes = [], { target = 'deno' } = {}): DenoHandler | CloudflareHandler => {
 	const router = new Router();
 	const middlewares: Array<Middleware> = [];
 
@@ -145,31 +145,46 @@ export const Routing = (routes: Routes = []): DenoHandler => {
 	const pipeline = compose<Middleware, Handler>(
 		...middlewares,
 		RouteFinder(router),
-	)(
-		(_) => Response.NotFound()
-	);
+	)((_) => Response.NotFound());
 
-	return (request: Request, connInfo: ConnInfo) => {
-		(request as Request & RequestExtension).params = {};
-		(request as Request & RequestExtension).files = {};
+	if (target === 'deno') {
+		return (request: Request, connInfo: ConnInfo) => {
+			(request as Request & RequestExtension).params = {};
+			(request as Request & RequestExtension).files = {};
 
-		const context: Context = {
-			page: () => { },
-			// Deno
-			connInfo,
-			// Cloudflare
-			bindings: {},
-			execution: {
-				waitUntil(promise) {
-					// Nothing to do here!
-					return promise.catch(err => {
-						console.error(err);
-						throw err;
-					})
-				},
+			const context: Context = {
+				page: () => { },
+				connInfo,
+				bindings: {},
+				execution: {
+					waitUntil(promise) {
+						// Nothing to do here!
+						return promise.catch(err => {
+							console.error(err);
+							throw err;
+						})
+					},
+				}
 			}
-		}
 
-		return pipeline(request as Request & RequestExtension, context);
-	};
+			return pipeline(request as Request & RequestExtension, context);
+		};
+	} else if (target === 'cloudflare') {
+		return (request: Request, bindings: Bindings, execution: ExecutionContext) => {
+			(request as Request & RequestExtension).params = {};
+			(request as Request & RequestExtension).files = {};
+
+			const context: Context = {
+				page: () => { },
+				connInfo: {} as ConnInfo,
+				bindings,
+				execution,
+			}
+
+			return pipeline(request as Request & RequestExtension, context);
+		};
+
+	} else {
+		throw new Error('Provided wrong `target` for `Routing` ');
+	}
 };
