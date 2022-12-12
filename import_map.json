@@ -1,7 +1,7 @@
 {
 	"imports": {
-		"http/": "https://deno.land/std@0.160.0/http/",
-		"path": "https://deno.land/std@0.160.0/path/mod.ts",
-		"cli": "https://deno.land/std@0.160.0/flags/mod.ts"
+		"http/": "https://deno.land/std@0.175.0/http/",
+		"path": "https://deno.land/std@0.175.0/path/mod.ts",
+		"cli": "https://deno.land/std@0.175.0/flags/mod.ts"
 	}
 }
